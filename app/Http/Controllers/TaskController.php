@@ -42,22 +42,15 @@ class TaskController extends Controller
             'description' => 'nullable',
         ]);
 
-        $task->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            'is_completed' => $request->has('is_completed'),
-        ]);
+        $task->update($request->all());
 
         return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');
     }
 
     public function destroy(Task $task)
     {
-        try {
-            $task->delete(); // Use route model binding to delete the task
-            return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
-        } catch (\Exception $e) {
-            return redirect()->route('tasks.index')->with('error', 'Failed to delete the task.');
-        }
+        $task->delete();
+
+        return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
     }
 }

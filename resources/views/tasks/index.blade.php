@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1 class="mb-4 text-center">Task List</h1>
+    <h1 class="mb-4">Task List</h1>
 
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -10,8 +10,8 @@
 
     <a href="{{ route('tasks.create') }}" class="btn btn-primary mb-3">Add New Task</a>
 
-    <table class="table table-bordered table-hover shadow-sm">
-        <thead class="table-dark">
+    <table class="table table-bordered">
+        <thead>
             <tr>
                 <th>Title</th>
                 <th>Description</th>
@@ -33,47 +33,18 @@
                     </td>
                     <td>
                         <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-sm btn-info">Edit</a>
-                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" 
-                            data-task-id="{{ $task->id }}">Delete</button>
+                        <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('Are you sure?')">Delete</button>
+                        </form>
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="4" class="text-center">No tasks found.</td></tr>
+                <tr><td colspan="4">No tasks found.</td></tr>
             @endforelse
         </tbody>
     </table>
 </div>
-
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to delete this task?
-            </div>
-            <div class="modal-footer">
-                <form id="deleteForm" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    const deleteModal = document.getElementById('deleteModal');
-    deleteModal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget; // Button that triggered the modal
-        const taskId = button.getAttribute('data-task-id'); // Extract task ID from data attribute
-        const form = document.getElementById('deleteForm');
-        form.action = `/tasks/${taskId}`; // Update the form action dynamically
-    });
-</script>
 @endsection
